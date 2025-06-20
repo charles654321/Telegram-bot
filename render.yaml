@@ -1,6 +1,6 @@
 services:
   - type: worker
-    name: telegram-translate-bot
+    name: telegram-bot
     runtime: python
     buildCommand: pip install -r requirements.txt
     startCommand: python translate_forward.py

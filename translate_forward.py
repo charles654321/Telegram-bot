@@ -1,33 +1,27 @@
 from telethon import TelegramClient, events
-from googletrans import Translator
+from translate import Translator
 
 # Tes identifiants API Telegram
-api_id = 25668434   # <-- remplace avec le tien
-api_hash = '8ca8502ca239377bf945e89c62ad5f94'  # <-- remplace avec le tien
+api_id = 25668434
+api_hash = '8ca8502ca239377bf945e89c62ad5f94'
 
-# Session unique pour ce projet
 session_name = 'session_translate'
 
-# Chaînes sources en arabe (publiques)
-source_channels = ['@hamza20300', '@osama1984osama', '@mumenjmmeqdad']  # remplace-les
-
-# Chaîne cible (la tienne)
+source_channels = ['@hamza20300', '@osama1984osama', '@mumenjmmeqdad']
 target_channel = -1002629171243
 
-# Initialisation
 client = TelegramClient(session_name, api_id, api_hash)
-translator = Translator()
+translator = Translator(to_lang="en", from_lang="ar")
 
 @client.on(events.NewMessage(chats=source_channels))
 async def handler(event):
     try:
-        # Traduire le texte s'il existe
-        original_text = event.raw_text.strip()
+        original_text = event.raw_text.strip() if event.raw_text else ''
         translated = ''
-        if original_text:
-            translated = translator.translate(original_text, src='ar', dest='en').text
 
-        # Cas 1 : message avec média (photo, vidéo, etc.)
+        if original_text:
+            translated = translator.translate(original_text)
+
         if event.media:
             await client.send_file(
                 target_channel,
@@ -36,12 +30,10 @@ async def handler(event):
             )
             print("📸 Média envoyé avec traduction.")
 
-        # Cas 2 : message texte seul (pas de média)
         elif translated:
             await client.send_message(target_channel, translated)
             print(f"✅ Texte traduit et envoyé : {translated}")
 
-        # Cas 3 : ni texte ni média → ne rien faire
         else:
             print("⚠️ Message vide ignoré.")
 

@@ -1,2 +1,2 @@
 telethon
-translate
+libretranslatepy==2.1.1
